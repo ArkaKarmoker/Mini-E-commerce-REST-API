@@ -75,7 +75,15 @@ class Command(BaseCommand):
         elif admin_user.email != 'admin@example.com':
             admin_user.email = 'admin@example.com'
             admin_user.save(update_fields=['email'])
-        admin_token, _ = Token.objects.get_or_create(user=admin_user)
+        # Ensure fixed reproducible token for admin
+        ADMIN_TOKEN_KEY = 'bfd67759f593b11721125bcd9370c12764394c97'
+        admin_token, token_created = Token.objects.get_or_create(
+            user=admin_user,
+            defaults={'key': ADMIN_TOKEN_KEY}
+        )
+        if not token_created and admin_token.key != ADMIN_TOKEN_KEY:
+            Token.objects.filter(user=admin_user).delete()
+            admin_token = Token.objects.create(user=admin_user, key=ADMIN_TOKEN_KEY)
 
         # 2. Create Demo Customer
         customer_user, created = User.objects.get_or_create(
@@ -93,7 +101,16 @@ class Command(BaseCommand):
         elif customer_user.email != 'customer@example.com':
             customer_user.email = 'customer@example.com'
             customer_user.save(update_fields=['email'])
-        customer_token, _ = Token.objects.get_or_create(user=customer_user)
+
+        # Ensure fixed reproducible token for customer
+        CUSTOMER_TOKEN_KEY = '157e4425f7f6841c5f2597403720ffbbd74b8ab0'
+        customer_token, token_created = Token.objects.get_or_create(
+            user=customer_user,
+            defaults={'key': CUSTOMER_TOKEN_KEY}
+        )
+        if not token_created and customer_token.key != CUSTOMER_TOKEN_KEY:
+            Token.objects.filter(user=customer_user).delete()
+            customer_token = Token.objects.create(user=customer_user, key=CUSTOMER_TOKEN_KEY)
 
         # 3. Create Categories
         categories_data = [

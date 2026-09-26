@@ -42,6 +42,7 @@ class APIRootView(APIView):
                 "auth_login": request.build_absolute_uri('/api/auth/login/'),
                 "auth_logout": request.build_absolute_uri('/api/auth/logout/'),
                 "auth_profile": request.build_absolute_uri('/api/auth/profile/'),
+                "api_token_auth": request.build_absolute_uri('/api-token-auth/'),
                 "categories": request.build_absolute_uri('/api/categories/'),
                 "products": request.build_absolute_uri('/api/products/'),
                 "orders": request.build_absolute_uri('/api/orders/'),
