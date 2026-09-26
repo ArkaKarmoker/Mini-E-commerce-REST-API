@@ -37,7 +37,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     http_method_names = ['get', 'post', 'head', 'options']
 
+    queryset = Order.objects.all()
+
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False) or not self.request:
+            return Order.objects.none()
         user = self.request.user
         if not user.is_authenticated:
             return Order.objects.none()

@@ -60,9 +60,8 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 
-    # API Root
+    # API Root Index
     path('', APIRootView.as_view(), name='api-root-index'),
-    path('api/', APIRootView.as_view(), name='api-root'),
 
     # Interactive API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
@@ -73,11 +72,8 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls', namespace='accounts')),
     path('api-token-auth/', obtain_auth_token, name='api-token-auth'),
 
-    # Routers mounted at /api/ (e.g. /api/products/, /api/categories/, /api/orders/)
+    # Routers mounted at /api/ (e.g. /api/products/, /api/categories/, /api/orders/, /api/reviews/)
     path('api/', include(router.urls)),
-
-    # Also mounted at root (e.g. /products/, /categories/, /orders/) for direct access
-    path('', include(router.urls)),
 ]
 
 if settings.DEBUG:
