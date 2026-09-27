@@ -206,48 +206,71 @@ Mini-E-commerce-REST-API/
 > [!NOTE]
 > **Reviewer Note:** `db.sqlite3` and `media/` are included in the repo (commented out in `.gitignore`) for instant evaluation without requiring manual migrations or seeding.
 
-### 1. Clone the Repository
+### 1. Prerequisites
+- **Python 3.12+** (Tested on Python 3.12.10) installed on your system.
+- **Git** installed on your system.
+
+### 2. Clone the Repository
+Clone the repository:
 ```bash
 git clone https://github.com/ArkaKarmoker/Mini-E-commerce-REST-API.git
+```
+Navigate into the project directory:
+```bash
 cd Mini-E-commerce-REST-API
 ```
 
-### 2. Create & Activate Virtual Environment
+### 3. Create & Activate Virtual Environment
 
-**Windows (PowerShell):**
+**On Windows (PowerShell):**  
+Create virtual environment:
 ```powershell
 python -m venv venv
-.\venv\Scripts\Activate.ps1
+```
+Activate virtual environment:
+```powershell
+.\venv\Scripts\activate
 ```
 
-**Windows (Command Prompt):**
+**On Windows (Command Prompt):**  
+Create virtual environment:
 ```cmd
 python -m venv venv
+```
+Activate virtual environment:
+```cmd
 venv\Scripts\activate.bat
 ```
 
-**macOS / Linux:**
+**On macOS / Linux:**  
+Create virtual environment:
 ```bash
 python3 -m venv venv
+```
+Activate virtual environment:
+```bash
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Apply Database Migrations
+### 5. Database Setup & Sample Data Seeding
+Create database migrations:
+```bash
+python manage.py makemigrations
+```
+Apply database migrations:
 ```bash
 python manage.py migrate
 ```
 
-### 5. Seed Database (Optional)
-Populate the database with pre-configured users, authentication tokens, categories, products, orders, and reviews:
+Populate the database with sample data:
 ```bash
 python manage.py seed_data
 ```
-
 To perform a clean reset (Recommended — flushes existing test orders/reviews and resets auto-increment sequences back to 1):
 ```bash
 python manage.py seed_data --clean
