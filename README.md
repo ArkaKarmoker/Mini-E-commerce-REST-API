@@ -31,6 +31,7 @@ A scalable, production-ready backend REST API for an E-commerce platform built w
 - [Filtering, Searching & Ordering](#-filtering-searching--ordering)
 - [Token Authentication Usage](#-token-authentication-usage)
 - [Postman API Testing](#-postman-api-testing)
+- [Application Screenshots](#-application-screenshots)
 
 ---
 
@@ -163,6 +164,7 @@ Mini-E-commerce-REST-API/
 │   └── wsgi.py
 ├── media/
 │   └── products/                   # Optimized WebP product images
+├── screenshots/                    # UI, Postman & Swagger documentation screenshots
 ├── orders/                         # Order processing & inventory lifecycle
 │   ├── migrations/
 │   ├── admin.py
@@ -238,7 +240,7 @@ python manage.py migrate
 ```
 
 ### 5. Seed Database (Optional but Recommended)
-Populate the database with pre-configured users, categories, products, orders, and reviews:
+Populate the database with pre-configured users, authentication tokens, categories, products, orders, and reviews:
 ```bash
 python manage.py seed_data
 ```
@@ -399,18 +401,17 @@ The `/api/products/` endpoint supports multi-parameter filtering, full-text sear
 
 ## 🔒 Token Authentication Usage
 
-Authenticate requests to protected endpoints by passing the token in the `Authorization` HTTP header:
+Include the token in the `Authorization` HTTP header with the `Token` prefix for all protected endpoints:
 
-```http
-Authorization: Token <your_token_here>
-```
+| Header Key | Header Value | Example |
+| :--- | :--- | :--- |
+| `Authorization` | `Token <token_key>` | `Token 157e4425f7f6841c5f2597403720ffbbd74b8ab0` |
 
-### Example: Creating an Order
+### Quick Example: Creating an Order
 
 **Request:**
 ```http
-POST /api/orders/ HTTP/1.1
-Host: 127.0.0.1:8000
+POST /api/orders/
 Authorization: Token 157e4425f7f6841c5f2597403720ffbbd74b8ab0
 Content-Type: application/json
 
@@ -424,11 +425,8 @@ Content-Type: application/json
 ```json
 {
     "id": 6,
-    "user": "customer",
-    "user_id": 2,
     "product": 1,
     "product_name": "iPhone 15 Pro Max",
-    "product_price": "1199.99",
     "quantity": 2,
     "total_price": "2399.98",
     "status": "Pending",
@@ -450,3 +448,68 @@ A ready-to-use Postman collection is included in the root directory: [`postman_c
    - `{{admin_token}}`: `bfd67759f593b11721125bcd9370c12764394c97`
    - `{{user_token}}`: `157e4425f7f6841c5f2597403720ffbbd74b8ab0`
 4. Execute the requests in sequence to test authentication, categories, products, filtering, orders, and reviews.
+
+---
+
+## 📸 Application Screenshots
+
+### 1. Interactive API Documentation & Explorer
+
+#### 📄 Swagger UI Documentation (`/api/docs/`)
+Interactive OpenAPI 3.0 specification with live request testing and schema definitions:
+
+![Swagger UI Documentation](./screenshots/OpenAPI.jpeg)
+
+#### 🌐 DRF Browsable API (`/`)
+Root API index providing direct hyperlinked navigation to all endpoints:
+
+![DRF Browsable API](./screenshots/DRF%20Browsable%20API.jpeg)
+
+---
+
+### 2. Postman Collection & Test Suite
+
+#### 📬 Postman Collection Workspace
+Complete collection with 7 functional folders, 32 endpoints, and 100% saved response examples:
+
+![Postman Collection](./screenshots/Postman%20Collection.png)
+
+---
+
+### 3. Django Administration Panel
+
+#### ⚙️ Admin Dashboard Overview (`/admin/`)
+Central administrative control panel for all data models:
+
+![Django Admin Dashboard](./screenshots/Django%20Admin%20Panel.jpeg)
+
+#### 🛍️ Products Management
+Catalog administration featuring live thumbnail previews and WebP image tracking:
+
+![Django Admin Products](./screenshots/Django%20Admin%20Panel%20Products.jpeg)
+
+#### 📦 Orders Lifecycle Management
+Real-time order tracking with color-coded status badges (`Pending`, `Processing`, `Completed`, `Cancelled`):
+
+![Django Admin Orders](./screenshots/Django%20Admin%20Panel%20Orders.jpeg)
+
+#### 📁 Categories Management
+Product categorization and taxonomy management:
+
+![Django Admin Categories](./screenshots/Django%20Admin%20Panel%20Categories.jpeg)
+
+#### ⭐ Verified Customer Reviews
+Customer feedback management with 1–5 star rating enforcement:
+
+![Django Admin Reviews](./screenshots/Django%20Admin%20Panel%20Reviews.jpeg)
+
+#### 🔑 Authentication Tokens
+Cryptographic token tracking for stateless API authentication:
+
+![Django Admin Tokens](./screenshots/Django%20Admin%20Panel%20Tokens.jpeg)
+
+#### 👥 User Accounts Management
+Customer and administrative user account management with RBAC flags:
+
+![Django Admin Users](./screenshots/Django%20Admin%20Panel%20Users.jpeg)
+
