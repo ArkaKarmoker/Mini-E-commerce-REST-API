@@ -516,6 +516,21 @@ Central administrative control panel for all data models:
 
 ![Django Admin Dashboard](./screenshots/Django%20Admin%20Panel.jpeg)
 
+#### 👥 User Accounts Management
+Customer and administrative user account management with RBAC flags:
+
+![Django Admin Users](./screenshots/Django%20Admin%20Panel%20Users.jpeg)
+
+#### 🔑 Authentication Tokens
+Cryptographic token tracking for stateless API authentication:
+
+![Django Admin Tokens](./screenshots/Django%20Admin%20Panel%20Tokens.jpeg)
+
+#### 📁 Categories Management
+Product categorization and catalog organization:
+
+![Django Admin Categories](./screenshots/Django%20Admin%20Panel%20Categories.jpeg)
+
 #### 🛍️ Products Management
 Catalog administration featuring live thumbnail previews and WebP image tracking:
 
@@ -526,25 +541,10 @@ Real-time order tracking with color-coded status badges (`Pending`, `Processing`
 
 ![Django Admin Orders](./screenshots/Django%20Admin%20Panel%20Orders.jpeg)
 
-#### 📁 Categories Management
-Product categorization and catalog organization:
-
-![Django Admin Categories](./screenshots/Django%20Admin%20Panel%20Categories.jpeg)
-
 #### ⭐ Verified Customer Reviews
 Customer feedback management with 1–5 star rating enforcement:
 
 ![Django Admin Reviews](./screenshots/Django%20Admin%20Panel%20Reviews.jpeg)
-
-#### 🔑 Authentication Tokens
-Cryptographic token tracking for stateless API authentication:
-
-![Django Admin Tokens](./screenshots/Django%20Admin%20Panel%20Tokens.jpeg)
-
-#### 👥 User Accounts Management
-Customer and administrative user account management with RBAC flags:
-
-![Django Admin Users](./screenshots/Django%20Admin%20Panel%20Users.jpeg)
 
 ---
 
