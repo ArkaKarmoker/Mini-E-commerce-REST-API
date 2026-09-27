@@ -7,7 +7,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     Standard pagination for API list endpoints.
     Allows clients to customize page size with ?page_size=N up to max_page_size.
     """
-    page_size = 10
+    page_size = 6
     page_size_query_param = 'page_size'
     max_page_size = 100
 
