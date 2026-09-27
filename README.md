@@ -77,61 +77,61 @@ erDiagram
     PRODUCT ||--o{ REVIEW : "receives (1:N)"
 
     USER {
-        int id PK "BigAutoField"
-        string username UK "varchar(150), unique, indexed"
-        string email "varchar(254), required"
-        string password "varchar(128), pbkdf2_sha256"
-        string first_name "varchar(150), optional"
-        string last_name "varchar(150), optional"
-        boolean is_staff "Staff access flag"
-        boolean is_superuser "Superuser admin flag"
-        boolean is_active "Account status flag"
-        datetime date_joined "Account creation timestamp"
+        int id PK
+        string username UK
+        string email
+        string password
+        string first_name
+        string last_name
+        boolean is_staff
+        boolean is_superuser
+        boolean is_active
+        datetime date_joined
     }
 
     TOKEN {
-        string key PK "varchar(40), crypto hex token"
-        int user_id FK,UK "OneToOne to User, CASCADE"
-        datetime created "Creation timestamp"
+        string key PK
+        int user_id FK,UK "OneToOne, CASCADE"
+        datetime created
     }
 
     CATEGORY {
-        int id PK "BigAutoField"
-        string name UK "varchar(120), unique, indexed"
-        string description "text, optional"
-        datetime created_at "auto_now_add=True"
-        datetime updated_at "auto_now=True"
+        int id PK
+        string name UK
+        string description
+        datetime created_at
+        datetime updated_at
     }
 
     PRODUCT {
-        int id PK "BigAutoField"
-        int category_id FK "ForeignKey to Category, CASCADE"
-        string name "varchar(255), indexed"
-        string description "text, optional"
-        decimal price "max_digits=10, decimal_places=2, min=0.01"
-        int stock "positive_int, default=0, min=0"
-        string image "ImageField (auto-converted to WebP)"
-        datetime created_date "auto_now_add=True, indexed"
-        datetime updated_date "auto_now=True"
+        int id PK
+        int category_id FK "CASCADE"
+        string name
+        string description
+        decimal price "min 0.01"
+        int stock "min 0"
+        string image "WebP format"
+        datetime created_date
+        datetime updated_date
     }
 
     ORDER {
-        int id PK "BigAutoField"
-        int user_id FK "ForeignKey to User, CASCADE"
-        int product_id FK "ForeignKey to Product, CASCADE"
-        int quantity "positive_int, min=1"
-        decimal total_price "max_digits=12, decimal_places=2, min=0.01"
-        string status "choices: Pending|Processing|Completed|Cancelled"
-        datetime order_date "auto_now_add=True, indexed"
+        int id PK
+        int user_id FK "CASCADE"
+        int product_id FK "CASCADE"
+        int quantity "min 1"
+        decimal total_price
+        string status "Pending|Processing|Completed|Cancelled"
+        datetime order_date
     }
 
     REVIEW {
-        int id PK "BigAutoField"
-        int product_id FK "ForeignKey to Product, CASCADE"
-        int user_id FK "ForeignKey to User, CASCADE"
-        int rating "positive_smallint, min=1, max=5"
-        string comment "text, optional"
-        datetime created_at "auto_now_add=True"
+        int id PK
+        int product_id FK "CASCADE"
+        int user_id FK "CASCADE"
+        int rating "1 to 5"
+        string comment
+        datetime created_at
     }
 ```
 
@@ -141,55 +141,54 @@ erDiagram
 
 ```text
 Mini-E-commerce-REST-API/
-├── accounts/                       # Authentication & user management app
-│   ├── migrations/                 # Database migration history
-│   ├── admin.py                    # Django admin customization
-│   ├── apps.py                     # App configuration
-│   ├── models.py                   # Custom user model extensions
-│   ├── serializers.py              # Register, Login, and User serializers
-│   ├── tests.py                    # 4 Core tests: Register, Login, Profile, Logout
-│   ├── urls.py                     # Auth routes: /register/, /login/, /logout/, /profile/
-│   └── views.py                    # RegisterView, LoginView, LogoutView, ProfileView
+├── accounts/                       # Authentication & user management
+│   ├── migrations/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py                    # 4 Core tests (Register, Login, Profile, Logout)
+│   ├── urls.py
+│   └── views.py
 ├── core/                           # Django project root configuration
-│   ├── __init__.py
-│   ├── asgi.py                     # ASGI entrypoint for async servers
-│   ├── settings.py                 # Global settings (DRF, Auth, Spectacular, Media)
-│   ├── urls.py                     # Root routing, API sitemap, Token Auth & Swagger
-│   └── wsgi.py                     # WSGI entrypoint for web servers
-├── media/                          # Uploaded and converted product media
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py                     # Root routing, API sitemap & Swagger docs
+│   └── wsgi.py
+├── media/
 │   └── products/                   # Optimized WebP product images
-├── orders/                         # Order processing & inventory lifecycle app
-│   ├── migrations/                 # Order migrations
-│   ├── admin.py                    # Order admin with color-coded status badges
-│   ├── apps.py                     # App configuration
-│   ├── models.py                   # Order model (User, Product, Quantity, Total, Status)
-│   ├── serializers.py              # OrderSerializer with atomic stock validation
-│   ├── tests.py                    # 4 Core tests: Stock deduction, Insufficient stock, Isolation, Cancel
-│   ├── urls.py                     # Order router endpoints (/api/orders/)
-│   └── views.py                    # OrderViewSet with select_for_update locking
-├── products/                       # Catalog, category, and review management app
+├── orders/                         # Order processing & inventory lifecycle
+│   ├── migrations/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py                    # 4 Core tests (Stock deduction, Isolation, Cancel)
+│   ├── urls.py
+│   └── views.py                    # OrderViewSet with row-level stock locking
+├── products/                       # Catalog, category & review management
 │   ├── management/
 │   │   └── commands/
-│   │       └── seed_data.py        # Seed command (Users, Categories, Products, Orders, Reviews)
-│   ├── migrations/                 # Products & Categories migrations
+│   │       └── seed_data.py        # Database seeding command
+│   ├── migrations/
 │   ├── seed_images/                # Source images for database seeding
-│   ├── admin.py                    # Admin registrations with image previews
-│   ├── apps.py                     # App configuration
+│   ├── admin.py
+│   ├── apps.py
 │   ├── filters.py                  # ProductFilter (Price range, Category, Search)
-│   ├── models.py                   # Category, Product (WebP pipeline), and Review models
-│   ├── pagination.py               # StandardResultsSetPagination (?page_size support)
-│   ├── permissions.py              # IsAdminOrReadOnly & IsReviewAuthorOrReadOnly
-│   ├── serializers.py              # Category, Product, and Review serializers
-│   ├── tests.py                    # 7 Core tests: Category CRUD, Product CRUD, Search, Filter, Review
-│   ├── urls.py                     # Router registrations for products, categories, reviews
-│   └── views.py                    # CategoryViewSet, ProductViewSet, ReviewViewSet
-├── .gitignore                      # Git ignored files & patterns
-├── db.sqlite3                      # Pre-seeded SQLite database with sample records
-├── manage.py                       # Django CLI management utility
+│   ├── models.py                   # Category, Product (WebP pipeline), Review
+│   ├── pagination.py               # StandardResultsSetPagination (?page_size)
+│   ├── permissions.py              # IsAdminOrReadOnly & IsReviewAuthor
+│   ├── serializers.py
+│   ├── tests.py                    # 7 Core tests (Category, Product, Filter, Review)
+│   ├── urls.py
+│   └── views.py
+├── .gitignore
+├── db.sqlite3                      # Pre-seeded database
+├── manage.py
 ├── postman_collection.json         # Postman collection (32 endpoints & saved examples)
-├── Project Requirements - Mini E-commerce REST API.md # Assignment requirements
-├── README.md                       # Comprehensive documentation & setup guide
-└── requirements.txt                # Pinned project dependencies
+├── Project Requirements - Mini E-commerce REST API.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
