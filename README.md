@@ -51,120 +51,87 @@ A scalable, production-ready backend REST API for an E-commerce platform built w
 
 ## ✨ Key Features
 
-1. **User Authentication (Token-based)**
-   - Registration (`/api/auth/register/`) with password confirmation and automatic token generation.
-   - Login (`/api/auth/login/`) returning auth token and user profile details.
-   - Standard DRF token retrieval (`/api-token-auth/`) via username & password.
-   - Logout (`/api/auth/logout/`) invalidating and deleting active auth tokens.
-   - Profile retrieval and update (`/api/auth/profile/`).
-
-2. **Category Management**
-   - Full CRUD operations: List, Retrieve, Create, Update, and Delete.
-   - Role-Based Access Control (RBAC): Public read-only access, staff/admin restricted modifications.
-
-3. **Product Management & Image Optimization**
-   - Fields: Name, Description, Price, Stock, Category, Image, Created Date, Updated Date, Average Rating, Total Reviews.
-   - Full CRUD operations with validation preventing negative price or negative stock.
-   - Automated WebP image processing pipeline via Pillow converting uploaded JPEG/PNGs to lightweight `.webp` format.
-   - Public read-only access, staff/admin restricted modifications.
-
-4. **Product Filtering, Searching, Ordering & Pagination**
-   - **Search:** Case-insensitive search across product name and description (`?search=phone`).
-   - **Category Filter:** Filter by Category ID (`?category=1`) or Category Name (`?category_name=Smartphones`).
-   - **Price Range Filter:** Range filtering using `min_price` and `max_price` (`?min_price=300&max_price=1000`) or exact price (`?price=299.99`).
-   - **Ordering:** Ascending (`?ordering=price`) and descending (`?ordering=-price`, `?ordering=-created_date`).
-   - **Custom Pagination:** Page-based pagination with configurable page size (`?page=1&page_size=5`).
-
-5. **Order Processing & Concurrency Control**
-   - Authenticated order placement specifying product ID and quantity.
-   - Concurrency-safe atomic inventory deduction using database row-level locking (`select_for_update`).
-   - Automatic calculation of `total_price = product.price * quantity`.
-   - Strict user isolation: Customers view only their own orders; staff/admins view all orders.
-   - Order cancellation (`/api/orders/{id}/cancel/`) with automatic stock restoration back to inventory.
-
-6. **Verified Purchase Product Reviews**
-   - Authenticated customers can submit a rating (1–5) and comment for products they have purchased.
-   - Enforces verified purchase validation: User must have a `Completed` order for the product.
-   - Prevents duplicate reviews (one review per user per product).
-   - Real-time calculation of product average rating and total review count.
-   - Object-level permission: Authors can update/delete their reviews; admins can moderate.
-
-7. **Interactive API Documentation & Navigation**
-   - Swagger UI (`/api/docs/`) with live interactive API testing.
-   - ReDoc (`/api/redoc/`) offering clean 3-panel documentation.
-   - Raw OpenAPI 3.0 schema endpoint (`/api/schema/`).
-   - Clickable interactive API Root index at `/` linking directly to all endpoints.
+- **🔐 Token Authentication & Profiles:** User registration with password validation, token issuance (`/api-token-auth/` & `/api/auth/login/`), token invalidation on logout, and user profile management.
+- **📁 Category Management:** Full CRUD operations with Role-Based Access Control (RBAC: public read-only, admin-restricted modifications).
+- **🛍️ Product Catalog & WebP Pipeline:** Comprehensive product CRUD with negative price/stock protection and an automated Pillow pipeline converting uploads to WebP.
+- **🔍 Advanced Search, Filtering & Pagination:** Multi-field search (`?search=`), category & price range filtering (`?min_price=&max_price=`), ordering, and customizable page sizes (`?page_size=`).
+- **🛒 Concurrency-Safe Orders:** Atomic order placement with row-level locking (`select_for_update`) to prevent overselling, automatic total calculation, user isolation, and stock restoration on cancellation.
+- **⭐ Verified Purchase Reviews:** Ratings (1–5) and reviews strictly restricted to customers with `Completed` orders, duplicate review prevention, and real-time average rating calculation.
+- **📖 Interactive API Docs:** Comprehensive OpenAPI 3.0 specification with live Swagger UI (`/api/docs/`), ReDoc (`/api/redoc/`), and an interactive API root index at `/`.
 
 ---
 
 ## 📊 Database Schema (ERD)
 
-The relational schema models user accounts, authentication tokens, categories, products, orders, and verified reviews:
+The relational schema models user accounts, authentication tokens, categories, products, orders, and verified reviews. All tables, primary keys, foreign keys, cascade behaviors, and business constraints are enforced at both the database level and the Django ORM layer.
+
+### 📐 Mermaid Entity Relationship Diagram
 
 ```mermaid
 erDiagram
-    AUTH_USER ||--o{ ORDERS : places
-    AUTH_USER ||--o{ REVIEWS : writes
-    AUTH_USER ||--o| AUTHTOKEN_TOKEN : owns
-    CATEGORIES ||--o{ PRODUCTS : categorizes
-    PRODUCTS ||--o{ ORDERS : ordered_in
-    PRODUCTS ||--o{ REVIEWS : receives
+    USER ||--o| TOKEN : "authenticates (1:1)"
+    USER ||--o{ ORDER : "places (1:N)"
+    USER ||--o{ REVIEW : "authors (1:N)"
+    CATEGORY ||--o{ PRODUCT : "categorizes (1:N)"
+    PRODUCT ||--o{ ORDER : "ordered_in (1:N)"
+    PRODUCT ||--o{ REVIEW : "receives (1:N)"
 
-    AUTH_USER {
-        int id PK
-        string username UK
-        string email
-        string password
-        string first_name
-        string last_name
-        boolean is_staff
-        boolean is_superuser
-        datetime date_joined
+    USER {
+        int id PK "BigAutoField"
+        string username UK "varchar(150), unique, indexed"
+        string email "varchar(254), required"
+        string password "varchar(128), pbkdf2_sha256"
+        string first_name "varchar(150), optional"
+        string last_name "varchar(150), optional"
+        boolean is_staff "Staff access flag"
+        boolean is_superuser "Superuser admin flag"
+        boolean is_active "Account status flag"
+        datetime date_joined "Account creation timestamp"
     }
 
-    CATEGORIES {
-        int id PK
-        string name UK
-        string description
-        datetime created_at
-        datetime updated_at
+    TOKEN {
+        string key PK "varchar(40), crypto hex token"
+        int user_id FK,UK "OneToOne to User, CASCADE"
+        datetime created "Creation timestamp"
     }
 
-    PRODUCTS {
-        int id PK
-        int category_id FK
-        string name
-        string description
-        decimal price
-        int stock
-        string image
-        datetime created_date
-        datetime updated_date
+    CATEGORY {
+        int id PK "BigAutoField"
+        string name UK "varchar(120), unique, indexed"
+        string description "text, optional"
+        datetime created_at "auto_now_add=True"
+        datetime updated_at "auto_now=True"
     }
 
-    ORDERS {
-        int id PK
-        int user_id FK
-        int product_id FK
-        int quantity
-        decimal total_price
-        string status
-        datetime order_date
+    PRODUCT {
+        int id PK "BigAutoField"
+        int category_id FK "ForeignKey to Category, CASCADE"
+        string name "varchar(255), indexed"
+        string description "text, optional"
+        decimal price "max_digits=10, decimal_places=2, min=0.01"
+        int stock "positive_int, default=0, min=0"
+        string image "ImageField (auto-converted to WebP)"
+        datetime created_date "auto_now_add=True, indexed"
+        datetime updated_date "auto_now=True"
     }
 
-    REVIEWS {
-        int id PK
-        int product_id FK
-        int user_id FK
-        int rating
-        string comment
-        datetime created_at
+    ORDER {
+        int id PK "BigAutoField"
+        int user_id FK "ForeignKey to User, CASCADE"
+        int product_id FK "ForeignKey to Product, CASCADE"
+        int quantity "positive_int, min=1"
+        decimal total_price "max_digits=12, decimal_places=2, min=0.01"
+        string status "choices: Pending|Processing|Completed|Cancelled"
+        datetime order_date "auto_now_add=True, indexed"
     }
 
-    AUTHTOKEN_TOKEN {
-        string key PK
-        int user_id FK, UK
-        datetime created
+    REVIEW {
+        int id PK "BigAutoField"
+        int product_id FK "ForeignKey to Product, CASCADE"
+        int user_id FK "ForeignKey to User, CASCADE"
+        int rating "positive_smallint, min=1, max=5"
+        string comment "text, optional"
+        datetime created_at "auto_now_add=True"
     }
 ```
 
@@ -174,51 +141,55 @@ erDiagram
 
 ```text
 Mini-E-commerce-REST-API/
-├── core/                           # Django project configuration
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py                 # Core settings (Installed apps, DRF, Spectacular, DB)
-│   ├── urls.py                     # Root routing, API sitemap & Swagger documentation
-│   └── wsgi.py
 ├── accounts/                       # Authentication & user management app
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── serializers.py              # User registration, login, and profile serializers
-│   ├── tests.py                    # Auth & profile unit tests
-│   ├── urls.py                     # Auth endpoints (/register/, /login/, /logout/, /profile/)
+│   ├── migrations/                 # Database migration history
+│   ├── admin.py                    # Django admin customization
+│   ├── apps.py                     # App configuration
+│   ├── models.py                   # Custom user model extensions
+│   ├── serializers.py              # Register, Login, and User serializers
+│   ├── tests.py                    # 4 Core tests: Register, Login, Profile, Logout
+│   ├── urls.py                     # Auth routes: /register/, /login/, /logout/, /profile/
 │   └── views.py                    # RegisterView, LoginView, LogoutView, ProfileView
-├── products/                       # Categories, products, and reviews app
-│   ├── admin.py                    # Admin registrations with image thumbnail previews
-│   ├── apps.py
-│   ├── filters.py                  # ProductFilter (price range, category, search)
-│   ├── models.py                   # Category, Product (WebP pipeline), and Review models
-│   ├── pagination.py               # StandardResultsSetPagination
-│   ├── permissions.py              # IsAdminOrReadOnly & IsReviewAuthor
-│   ├── serializers.py              # Category, Product, and Review serializers
-│   ├── tests.py                    # Category, Product, Filter, Search, and Review tests
-│   ├── urls.py                     # Router registrations for products, categories, reviews
-│   ├── views.py                    # CategoryViewSet, ProductViewSet, ReviewViewSet
+├── core/                           # Django project root configuration
+│   ├── __init__.py
+│   ├── asgi.py                     # ASGI entrypoint for async servers
+│   ├── settings.py                 # Global settings (DRF, Auth, Spectacular, Media)
+│   ├── urls.py                     # Root routing, API sitemap, Token Auth & Swagger
+│   └── wsgi.py                     # WSGI entrypoint for web servers
+├── media/                          # Uploaded and converted product media
+│   └── products/                   # Optimized WebP product images
+├── orders/                         # Order processing & inventory lifecycle app
+│   ├── migrations/                 # Order migrations
+│   ├── admin.py                    # Order admin with color-coded status badges
+│   ├── apps.py                     # App configuration
+│   ├── models.py                   # Order model (User, Product, Quantity, Total, Status)
+│   ├── serializers.py              # OrderSerializer with atomic stock validation
+│   ├── tests.py                    # 4 Core tests: Stock deduction, Insufficient stock, Isolation, Cancel
+│   ├── urls.py                     # Order router endpoints (/api/orders/)
+│   └── views.py                    # OrderViewSet with select_for_update locking
+├── products/                       # Catalog, category, and review management app
 │   ├── management/
 │   │   └── commands/
-│   │       └── seed_data.py        # Database seeding command (Users, Categories, Products, Orders, Reviews)
-│   └── seed_images/                # Source product images for database seeding
-├── orders/                         # Order processing & inventory app
-│   ├── admin.py                    # Order admin with color-coded status badges
-│   ├── apps.py
-│   ├── models.py                   # Order model (User, Product, Quantity, Total Price, Status)
-│   ├── serializers.py              # OrderSerializer with atomic stock validation
-│   ├── tests.py                    # Order placement, concurrency, and stock restoration tests
-│   ├── urls.py                     # Order router endpoints
-│   └── views.py                    # OrderViewSet with select_for_update locking
-├── media/                          # Uploaded and converted product images (.webp)
-│   └── products/
-├── .gitignore
-├── db.sqlite3                      # Pre-seeded database with sample data
-├── manage.py                       # Django CLI management script
-├── postman_collection.json         # Postman API Collection
-├── requirements.txt                # Pinned project dependencies
-└── README.md
+│   │       └── seed_data.py        # Seed command (Users, Categories, Products, Orders, Reviews)
+│   ├── migrations/                 # Products & Categories migrations
+│   ├── seed_images/                # Source images for database seeding
+│   ├── admin.py                    # Admin registrations with image previews
+│   ├── apps.py                     # App configuration
+│   ├── filters.py                  # ProductFilter (Price range, Category, Search)
+│   ├── models.py                   # Category, Product (WebP pipeline), and Review models
+│   ├── pagination.py               # StandardResultsSetPagination (?page_size support)
+│   ├── permissions.py              # IsAdminOrReadOnly & IsReviewAuthorOrReadOnly
+│   ├── serializers.py              # Category, Product, and Review serializers
+│   ├── tests.py                    # 7 Core tests: Category CRUD, Product CRUD, Search, Filter, Review
+│   ├── urls.py                     # Router registrations for products, categories, reviews
+│   └── views.py                    # CategoryViewSet, ProductViewSet, ReviewViewSet
+├── .gitignore                      # Git ignored files & patterns
+├── db.sqlite3                      # Pre-seeded SQLite database with sample records
+├── manage.py                       # Django CLI management utility
+├── postman_collection.json         # Postman collection (32 endpoints & saved examples)
+├── Project Requirements - Mini E-commerce REST API.md # Assignment requirements
+├── README.md                       # Comprehensive documentation & setup guide
+└── requirements.txt                # Pinned project dependencies
 ```
 
 ---

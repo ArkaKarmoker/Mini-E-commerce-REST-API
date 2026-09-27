@@ -241,7 +241,6 @@ class Command(BaseCommand):
                 if image_path.exists() and (created or not has_disk_image or options.get('clean')):
                     with open(image_path, 'rb') as f:
                         prod.image.save(image_filename, File(f), save=True)
-                    self.stdout.write(f"  -> Attached & converted seed image for '{prod.name}' -> {prod.image.name}")
             created_products.append(prod)
 
         self.stdout.write(self.style.SUCCESS(f"Seeded {len(created_products)} products with images."))
