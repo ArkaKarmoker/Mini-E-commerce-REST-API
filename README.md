@@ -51,13 +51,13 @@ A scalable, production-ready backend REST API for an E-commerce platform built w
 
 ## ✨ Key Features
 
-- **🔐 Token Authentication & Profiles:** User registration with password validation, token issuance (`/api-token-auth/` & `/api/auth/login/`), token invalidation on logout, and user profile management.
-- **📁 Category Management:** Full CRUD operations with Role-Based Access Control (RBAC: public read-only, admin-restricted modifications).
-- **🛍️ Product Catalog & WebP Pipeline:** Comprehensive product CRUD with negative price/stock protection and an automated Pillow pipeline converting uploads to WebP.
-- **🔍 Advanced Search, Filtering & Pagination:** Multi-field search (`?search=`), category & price range filtering (`?min_price=&max_price=`), ordering, and customizable page sizes (`?page_size=`).
-- **🛒 Concurrency-Safe Orders:** Atomic order placement with row-level locking (`select_for_update`) to prevent overselling, automatic total calculation, user isolation, and stock restoration on cancellation.
-- **⭐ Verified Purchase Reviews:** Ratings (1–5) and reviews strictly restricted to customers with `Completed` orders, duplicate review prevention, and real-time average rating calculation.
-- **📖 Interactive API Docs:** Comprehensive OpenAPI 3.0 specification with live Swagger UI (`/api/docs/`), ReDoc (`/api/redoc/`), and an interactive API root index at `/`.
+- **🔐 Token Authentication** — User registration, token-based login, profile management, and logout invalidation.
+- **📁 Category Management** — Complete CRUD operations with role-based access control (public read, admin write).
+- **🛍️ Product Catalog & WebP** — Product CRUD with negative price/stock protection and automated WebP image conversion.
+- **🔍 Search & Filtering** — Multi-field search, category and price range filters, custom ordering, and pagination.
+- **🛒 Concurrency-Safe Orders** — Atomic order placement with row-level stock locking and automatic cancellation rollback.
+- **⭐ Verified Reviews** — 1–5 star ratings and reviews restricted strictly to buyers with completed orders.
+- **📖 Interactive API Docs** — Auto-generated OpenAPI 3.0 documentation with live Swagger UI and ReDoc.
 
 ---
 
