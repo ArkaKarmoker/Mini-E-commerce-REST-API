@@ -231,7 +231,7 @@ Activate virtual environment:
 .\venv\Scripts\activate
 ```
 
-*— OR —*
+*or*
 
 **On Windows (Command Prompt):**  
 Create virtual environment:
@@ -243,7 +243,7 @@ Activate virtual environment:
 venv\Scripts\activate.bat
 ```
 
-*— OR —*
+*or*
 
 **On macOS / Linux:**  
 Create virtual environment:
@@ -274,6 +274,8 @@ Populate the database with sample data (Recommended — clean reset):
 ```bash
 python manage.py seed_data --clean
 ```
+
+*or*
 
 Seed without resetting existing records (Optional):
 ```bash
