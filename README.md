@@ -31,7 +31,7 @@ A scalable, production-ready backend REST API for an E-commerce platform built w
 - [Filtering, Searching & Ordering](#-filtering-searching--ordering)
 - [Token Authentication Usage](#-token-authentication-usage)
 - [Postman API Testing](#-postman-api-testing)
-- [Application Screenshots](#-application-screenshots)
+- [Screenshots](#-screenshots)
 
 ---
 
@@ -76,31 +76,12 @@ The relational schema models user accounts, authentication tokens, categories, p
 
 ```mermaid
 erDiagram
-    USER ||--o| TOKEN : "authenticates (1:1)"
-    USER ||--o{ ORDER : "places (1:N)"
-    USER ||--o{ REVIEW : "authors (1:N)"
     CATEGORY ||--o{ PRODUCT : "categorizes (1:N)"
     PRODUCT ||--o{ ORDER : "ordered_in (1:N)"
     PRODUCT ||--o{ REVIEW : "receives (1:N)"
-
-    USER {
-        int id PK
-        string username UK
-        string email
-        string password
-        string first_name
-        string last_name
-        boolean is_staff
-        boolean is_superuser
-        boolean is_active
-        datetime date_joined
-    }
-
-    TOKEN {
-        string key PK
-        int user_id FK,UK "OneToOne, CASCADE"
-        datetime created
-    }
+    ORDER }o--|| USER : "placed_by (N:1)"
+    REVIEW }o--|| USER : "written_by (N:1)"
+    USER ||--o| TOKEN : "authenticates (1:1)"
 
     CATEGORY {
         int id PK
@@ -140,6 +121,25 @@ erDiagram
         string comment
         datetime created_at
     }
+
+    USER {
+        int id PK
+        string username UK
+        string email
+        string password
+        string first_name
+        string last_name
+        boolean is_staff
+        boolean is_superuser
+        boolean is_active
+        datetime date_joined
+    }
+
+    TOKEN {
+        string key PK
+        int user_id FK,UK "OneToOne, CASCADE"
+        datetime created
+    }
 ```
 
 ---
@@ -164,7 +164,7 @@ Mini-E-commerce-REST-API/
 │   └── wsgi.py
 ├── media/
 │   └── products/                   # Optimized WebP product images
-├── screenshots/                    # UI, Postman & Swagger documentation screenshots
+├── screenshots/                    # Admin, Postman & Swagger documentation screenshots
 ├── orders/                         # Order processing & inventory lifecycle
 │   ├── migrations/
 │   ├── admin.py
@@ -203,6 +203,9 @@ Mini-E-commerce-REST-API/
 
 ## 🚀 Installation & Local Setup
 
+> [!NOTE]
+> **Reviewer Note:** `db.sqlite3` and `media/` are included in the repo (commented out in `.gitignore`) for instant evaluation without requiring manual migrations or seeding.
+
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/ArkaKarmoker/Mini-E-commerce-REST-API.git
@@ -239,13 +242,13 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-### 5. Seed Database (Optional but Recommended)
+### 5. Seed Database (Optional)
 Populate the database with pre-configured users, authentication tokens, categories, products, orders, and reviews:
 ```bash
 python manage.py seed_data
 ```
 
-To perform a clean reset (flushing existing test orders/reviews and resetting auto-increment sequences back to 1):
+To perform a clean reset (Recommended — flushes existing test orders/reviews and resets auto-increment sequences back to 1):
 ```bash
 python manage.py seed_data --clean
 ```
@@ -451,7 +454,7 @@ A ready-to-use Postman collection is included in the root directory: [`postman_c
 
 ---
 
-## 📸 Application Screenshots
+## 📸 Screenshots
 
 ### 1. Interactive API Documentation & Explorer
 
@@ -494,7 +497,7 @@ Real-time order tracking with color-coded status badges (`Pending`, `Processing`
 ![Django Admin Orders](./screenshots/Django%20Admin%20Panel%20Orders.jpeg)
 
 #### 📁 Categories Management
-Product categorization and taxonomy management:
+Product categorization and catalog organization:
 
 ![Django Admin Categories](./screenshots/Django%20Admin%20Panel%20Categories.jpeg)
 
