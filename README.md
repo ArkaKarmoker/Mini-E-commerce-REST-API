@@ -207,8 +207,7 @@ Mini-E-commerce-REST-API/
 > **Reviewer Note:** `db.sqlite3` and `media/` are included in the repo (commented out in `.gitignore`) for instant evaluation without requiring manual migrations or seeding.
 
 ### 1. Prerequisites
-- **Python 3.12+** (Tested on Python 3.12.10) installed on your system.
-- **Git** installed on your system.
+- **Python 3.12+**
 
 ### 2. Clone the Repository
 Clone the repository:
@@ -232,6 +231,8 @@ Activate virtual environment:
 .\venv\Scripts\activate
 ```
 
+*— OR —*
+
 **On Windows (Command Prompt):**  
 Create virtual environment:
 ```cmd
@@ -241,6 +242,8 @@ Activate virtual environment:
 ```cmd
 venv\Scripts\activate.bat
 ```
+
+*— OR —*
 
 **On macOS / Linux:**  
 Create virtual environment:
@@ -267,13 +270,14 @@ Apply database migrations:
 python manage.py migrate
 ```
 
-Populate the database with sample data:
-```bash
-python manage.py seed_data
-```
-To perform a clean reset (Recommended — flushes existing test orders/reviews and resets auto-increment sequences back to 1):
+Populate the database with sample data (Recommended — clean reset):
 ```bash
 python manage.py seed_data --clean
+```
+
+Seed without resetting existing records (Optional):
+```bash
+python manage.py seed_data
 ```
 
 ### 6. Start the Development Server
@@ -469,10 +473,10 @@ A ready-to-use Postman collection is included in the root directory: [`postman_c
 ### How to Use:
 1. Open **Postman**.
 2. Click **Import** and select `postman_collection.json`.
-3. The collection is pre-configured with environment variables:
-   - `{{base_url}}`: `http://127.0.0.1:8000`
-   - `{{admin_token}}`: `bfd67759f593b11721125bcd9370c12764394c97`
-   - `{{user_token}}`: `157e4425f7f6841c5f2597403720ffbbd74b8ab0`
+3. The collection is pre-configured with:
+   - **Base URL:** `http://127.0.0.1:8000`
+   - **Admin Token:** `bfd67759f593b11721125bcd9370c12764394c97`
+   - **User Token:** `157e4425f7f6841c5f2597403720ffbbd74b8ab0`
 4. Execute the requests in sequence to test authentication, categories, products, filtering, orders, and reviews.
 
 ---
@@ -538,4 +542,9 @@ Cryptographic token tracking for stateless API authentication:
 Customer and administrative user account management with RBAC flags:
 
 ![Django Admin Users](./screenshots/Django%20Admin%20Panel%20Users.jpeg)
+
+---
+
+Thank you for taking the time to review this project!  
+Developed by [Arka Karmoker](https://github.com/ArkaKarmoker).
 
