@@ -435,9 +435,10 @@ The `/api/products/` endpoint supports multi-parameter filtering, full-text sear
 
 Include the token in the `Authorization` HTTP header with the `Token` prefix for all protected endpoints:
 
-| Header Key | Header Value | Example |
-| :--- | :--- | :--- |
-| `Authorization` | `Token <token_key>` | `Token 157e4425f7f6841c5f2597403720ffbbd74b8ab0` |
+| Role | Header Key | Header Value Format | Example |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `Authorization` | `Token <token_key>` | `Token bfd67759f593b11721125bcd9370c12764394c97` |
+| **Customer** | `Authorization` | `Token <token_key>` | `Token 157e4425f7f6841c5f2597403720ffbbd74b8ab0` |
 
 ### Quick Example: Creating an Order
 
